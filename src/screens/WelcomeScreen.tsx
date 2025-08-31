@@ -12,10 +12,9 @@ const WelcomeScreen = () => {
       <Box flex={1} alignItems="center" justifyContent="center" padding="xl">
         {/* Logo */}
         <Box marginBottom="xl">
-          <Image
-            source={require('../assets/logo-placeholder.png')}
-            style={{ width: 120, height: 120 }}
-          />
+          <Text variant="header" color="primary" style={{ fontSize: 48 }}>
+            flawed
+          </Text>
         </Box>
 
         {/* Tagline */}
