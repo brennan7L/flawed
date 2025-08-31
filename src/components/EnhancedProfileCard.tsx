@@ -12,7 +12,7 @@ import Animated, {
   withTiming,
   runOnJS,
 } from 'react-native-reanimated';
-import { PanGestureHandler } from 'react-native-gesture-handler';
+import { GestureHandlerRootView, PanGestureHandler } from 'react-native-gesture-handler';
 
 const Box = createBox<Theme>();
 const Text = createText<Theme>();
@@ -67,9 +67,9 @@ export const EnhancedProfileCard = ({
     onEnd: (event, ctx) => {
       if (Math.abs(event.translationX) > SCREEN_WIDTH * 0.4) {
         const x = event.translationX > 0 ? SCREEN_WIDTH : -SCREEN_WIDTH;
-        if (x > 0) {
+        if (x > 0 && onLike) {
           runOnJS(onLike)();
-        } else {
+        } else if (x < 0 && onSkip) {
           runOnJS(onSkip)();
         }
       } else {
@@ -79,120 +79,125 @@ export const EnhancedProfileCard = ({
   });
 
   return (
-    <PanGestureHandler onGestureEvent={gestureHandler} enabled={isActive}>
-      <AnimatedBox
-        style={[styles.container, animatedStyle, style]}
-      >
-        {/* Profile Image */}
-        <Image
-          source={{ uri: profile.photos[0] }}
-          style={styles.image}
-        />
+    <GestureHandlerRootView style={styles.container}>
+      <PanGestureHandler onGestureEvent={gestureHandler} enabled={isActive}>
+        <AnimatedBox style={[styles.card, animatedStyle, style]}>
+          {/* Profile Image */}
+          <Image
+            source={{ uri: profile.photos[0] }}
+            style={styles.image}
+          />
 
-        {/* Content Overlay */}
-        <Box style={styles.overlay}>
-          {/* Header Info */}
-          <Box marginBottom="l">
-            <Text variant="header" color="white" marginBottom="xs">
-              {profile.name}, {profile.age}
-            </Text>
-            <Text variant="body" color="white" opacity={0.9}>
-              {profile.city}
-            </Text>
+          {/* Content Overlay */}
+          <Box style={styles.overlay}>
+            {/* Header Info */}
+            <Box marginBottom="l">
+              <Text variant="header" color="white" marginBottom="xs">
+                {profile.name}, {profile.age}
+              </Text>
+              <Text variant="body" color="white" opacity={0.9}>
+                {profile.city}
+              </Text>
+            </Box>
+
+            {/* Bio Quote */}
+            <Box
+              backgroundColor="cardBackground"
+              padding="m"
+              borderRadius="m"
+              opacity={0.95}
+              marginBottom="l"
+            >
+              <Text variant="body" color="textPrimary">
+                "{profile.bio}"
+              </Text>
+            </Box>
+
+            {/* Flaw Tags */}
+            <Box flexDirection="row" flexWrap="wrap" marginBottom="xl">
+              {profile.flaws.map((flaw) => (
+                <FlawTag
+                  key={flaw.id}
+                  label={flaw.label}
+                  category={flaw.category}
+                  type="relate"
+                />
+              ))}
+            </Box>
+
+            {/* Action Buttons */}
+            <Box flexDirection="row" justifyContent="space-around">
+              <TouchableOpacity onPress={onSkip}>
+                <Box
+                  backgroundColor="white"
+                  padding="l"
+                  borderRadius="full"
+                  opacity={0.9}
+                  style={styles.actionButton}
+                >
+                  <Text variant="header" color="textPrimary">
+                    ✕
+                  </Text>
+                </Box>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={onMessage}>
+                <Box
+                  backgroundColor="paleTeal"
+                  padding="l"
+                  borderRadius="full"
+                  style={styles.actionButton}
+                >
+                  <Text variant="header" color="white">
+                    💭
+                  </Text>
+                </Box>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={onLike}>
+                <Box
+                  backgroundColor="primary"
+                  padding="l"
+                  borderRadius="full"
+                  style={styles.actionButton}
+                >
+                  <Text variant="header" color="white">
+                    ❤️
+                  </Text>
+                </Box>
+              </TouchableOpacity>
+            </Box>
           </Box>
 
-          {/* Bio Quote */}
+          {/* Verification Badge */}
           <Box
-            backgroundColor="cardBackground"
-            padding="m"
+            position="absolute"
+            top={16}
+            right={16}
+            backgroundColor="primary"
+            padding="s"
             borderRadius="m"
-            opacity={0.95}
-            marginBottom="l"
+            opacity={0.9}
           >
-            <Text variant="body" color="textPrimary">
-              "{profile.bio}"
+            <Text variant="label" color="white">
+              ✓ Verified
             </Text>
           </Box>
-
-          {/* Flaw Tags */}
-          <Box flexDirection="row" flexWrap="wrap" marginBottom="xl">
-            {profile.flaws.map((flaw) => (
-              <FlawTag
-                key={flaw.id}
-                label={flaw.label}
-                category={flaw.category}
-                type="relate"
-              />
-            ))}
-          </Box>
-
-          {/* Action Buttons */}
-          <Box flexDirection="row" justifyContent="space-around">
-            <TouchableOpacity onPress={onSkip}>
-              <Box
-                backgroundColor="white"
-                padding="l"
-                borderRadius="full"
-                opacity={0.9}
-                style={styles.actionButton}
-              >
-                <Text variant="header" color="textPrimary">
-                  ✕
-                </Text>
-              </Box>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={onMessage}>
-              <Box
-                backgroundColor="paleTeal"
-                padding="l"
-                borderRadius="full"
-                style={styles.actionButton}
-              >
-                <Text variant="header" color="white">
-                  💭
-                </Text>
-              </Box>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={onLike}>
-              <Box
-                backgroundColor="primary"
-                padding="l"
-                borderRadius="full"
-                style={styles.actionButton}
-              >
-                <Text variant="header" color="white">
-                  ❤️
-                </Text>
-              </Box>
-            </TouchableOpacity>
-          </Box>
-        </Box>
-
-        {/* Verification Badge */}
-        <Box
-          position="absolute"
-          top={16}
-          right={16}
-          backgroundColor="primary"
-          padding="s"
-          borderRadius="m"
-          opacity={0.9}
-        >
-          <Text variant="label" color="white">
-            ✓ Verified
-          </Text>
-        </Box>
-      </AnimatedBox>
-    </PanGestureHandler>
+        </AnimatedBox>
+      </PanGestureHandler>
+    </GestureHandlerRootView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     width: CARD_WIDTH,
     height: CARD_HEIGHT,
+  },
+  card: {
+    width: '100%',
+    height: '100%',
     borderRadius: 20,
     overflow: 'hidden',
     backgroundColor: 'white',
@@ -223,7 +228,7 @@ const styles = StyleSheet.create({
     right: 0,
     padding: 20,
     paddingBottom: 32,
-    background: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.8) 100%)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
   actionButton: {
     transform: [{ scale: 1.2 }],
