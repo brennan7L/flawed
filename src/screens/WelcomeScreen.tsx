@@ -1,12 +1,19 @@
 import React from 'react';
-import { Image } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import { createBox, createText } from '@shopify/restyle';
 import { Theme } from '../constants/theme';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../navigation/types';
 
 const Box = createBox<Theme>();
 const Text = createText<Theme>();
 
+type WelcomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Welcome'>;
+
 const WelcomeScreen = () => {
+  const navigation = useNavigation<WelcomeScreenNavigationProp>();
+
   return (
     <Box flex={1} backgroundColor="mainBackground">
       <Box flex={1} alignItems="center" justifyContent="center" padding="xl">
@@ -31,33 +38,37 @@ const WelcomeScreen = () => {
         </Text>
 
         {/* CTA Button */}
-        <Box
-          backgroundColor="primary"
-          borderRadius="m"
-          padding="m"
-          width="100%"
-          alignItems="center"
-          marginBottom="m"
-        >
-          <Text color="white" variant="body" fontWeight="600">
-            Start Being Real
-          </Text>
-        </Box>
+        <TouchableOpacity style={{ width: '100%' }} onPress={() => navigation.navigate('Main')}>
+          <Box
+            backgroundColor="primary"
+            borderRadius="m"
+            padding="m"
+            width="100%"
+            alignItems="center"
+            marginBottom="m"
+          >
+            <Text color="white" variant="body" fontWeight="600">
+              Start Being Real
+            </Text>
+          </Box>
+        </TouchableOpacity>
 
         {/* Secondary Action */}
-        <Box
-          backgroundColor="mainBackground"
-          borderRadius="m"
-          padding="m"
-          width="100%"
-          alignItems="center"
-          borderWidth={1}
-          borderColor="border"
-        >
-          <Text color="textPrimary" variant="body" fontWeight="600">
-            I Already Have an Account
-          </Text>
-        </Box>
+        <TouchableOpacity style={{ width: '100%' }} onPress={() => navigation.navigate('Main')}>
+          <Box
+            backgroundColor="mainBackground"
+            borderRadius="m"
+            padding="m"
+            width="100%"
+            alignItems="center"
+            borderWidth={1}
+            borderColor="border"
+          >
+            <Text color="textPrimary" variant="body" fontWeight="600">
+              I Already Have an Account
+            </Text>
+          </Box>
+        </TouchableOpacity>
       </Box>
 
       {/* Feature Highlights */}
