@@ -50,7 +50,7 @@ export const HomeScreen = () => {
         padding="l"
         backgroundColor="mainBackground"
       >
-        <Text variant="header" color="primary" style={{ fontSize: 28 }}>
+        <Text variant="header" color="primary" style={{ fontSize: 36, fontWeight: 'bold' }}>
           flawed
         </Text>
 
@@ -117,6 +117,11 @@ export const HomeScreen = () => {
             <Text variant="body" color="textSecondary" textAlign="center">
               We're finding more people who embrace their flaws. Check back soon!
             </Text>
+            <TouchableOpacity onPress={() => setCurrentIndex(0)} style={{ marginTop: 20 }}>
+              <Box backgroundColor="primary" padding="m" borderRadius="m" alignItems="center">
+                <Text variant="body" color="white">Start Over</Text>
+              </Box>
+            </TouchableOpacity>
           </AnimatedBox>
         )}
       </Box>
@@ -153,7 +158,7 @@ export const HomeScreen = () => {
               alignItems="center"
             >
               <Text variant="body" color="white">
-                Got It
+                Embrace the Flaws
               </Text>
             </Box>
           </TouchableOpacity>
