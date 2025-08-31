@@ -5,160 +5,210 @@ import { Theme } from '../constants/theme';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
-import { AnimatedHero } from '../components/AnimatedHero';
-import { ProfilePreview } from '../components/ProfilePreview';
+import { AnimatedBrokenHeart } from '../components/AnimatedBrokenHeart';
+import { FeatureCard } from '../components/FeatureCard';
+import { ProfilePreviewCard } from '../components/ProfilePreviewCard';
 import { mockProfiles } from '../constants/mockData';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import Animated, {
+  useAnimatedScrollHandler,
+  useSharedValue,
+  FadeIn,
+  FadeInDown,
+} from 'react-native-reanimated';
 
 const Box = createBox<Theme>();
 const Text = createText<Theme>();
 const AnimatedBox = Animated.createAnimatedComponent(Box);
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 type WelcomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Welcome'>;
 
+const features = [
+  {
+    title: 'Embrace Your Flaws',
+    description: 'Show your weird, real self.',
+    icon: <Text style={styles.featureIcon}>🎭</Text>,
+  },
+  {
+    title: 'Match on Reality',
+    description: 'Connect through quirks, not filters.',
+    icon: <Text style={styles.featureIcon}>❤️</Text>,
+  },
+  {
+    title: 'Real Connections',
+    description: 'Vulnerability > perfection.',
+    icon: <Text style={styles.featureIcon}>🔥</Text>,
+  },
+];
+
 const WelcomeScreen = () => {
   const navigation = useNavigation<WelcomeScreenNavigationProp>();
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollY.value = event.contentOffset.y;
+    },
+  });
 
   return (
-    <ScrollView 
+    <Animated.ScrollView
       style={styles.container}
+      onScroll={scrollHandler}
+      scrollEventThrottle={16}
       showsVerticalScrollIndicator={false}
     >
-      <Box flex={1} backgroundColor="mainBackground">
-        {/* Hero Section */}
-        <AnimatedHero />
-
-        {/* CTA Buttons */}
-        <Box padding="xl">
-          <TouchableOpacity onPress={() => navigation.navigate('Main')}>
-            <Box
-              backgroundColor="primary"
-              borderRadius="m"
-              padding="m"
-              alignItems="center"
-              marginBottom="m"
-            >
-              <Text color="white" variant="body" fontWeight="600">
-                Start Being Real
-              </Text>
-            </Box>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => navigation.navigate('Main')}>
-            <Box
-              backgroundColor="mainBackground"
-              borderRadius="m"
-              padding="m"
-              alignItems="center"
-              borderWidth={1}
-              borderColor="border"
-            >
-              <Text color="textPrimary" variant="body" fontWeight="600">
-                I Already Have an Account
-              </Text>
-            </Box>
-          </TouchableOpacity>
-        </Box>
-
-        {/* Feature Section */}
-        <AnimatedBox 
-          entering={FadeInDown.delay(500)}
-          padding="xl"
-          backgroundColor="cardBackground"
-          borderRadius="xl"
-          margin="m"
+      {/* Hero Section */}
+      <Box
+        height={SCREEN_HEIGHT}
+        alignItems="center"
+        justifyContent="center"
+        padding="xl"
+      >
+        <AnimatedBrokenHeart />
+        
+        <Text
+          variant="header"
+          color="primary"
+          textAlign="center"
+          marginBottom="m"
+          style={styles.brandName}
         >
-          <Box flexDirection="row" marginBottom="l">
-            <Text variant="label" color="primary" marginRight="s">
-              ✅
-            </Text>
-            <Box flex={1}>
-              <Text variant="subheader" marginBottom="xs">
-                Embrace Your Flaws
-              </Text>
-              <Text variant="body" color="textSecondary">
-                Show your weird, real self.
-              </Text>
-            </Box>
-          </Box>
+          flawed
+        </Text>
 
-          <Box flexDirection="row" marginBottom="l">
-            <Text variant="label" color="primary" marginRight="s">
-              ❤️
-            </Text>
-            <Box flex={1}>
-              <Text variant="subheader" marginBottom="xs">
-                Match on Reality
-              </Text>
-              <Text variant="body" color="textSecondary">
-                Connect through quirks, not filters.
-              </Text>
-            </Box>
-          </Box>
+        <Text
+          variant="subheader"
+          color="textPrimary"
+          textAlign="center"
+          marginBottom="xl"
+          style={styles.tagline}
+        >
+          The Dating App That{'\n'}
+          Starts with the Truth
+        </Text>
 
-          <Box flexDirection="row">
-            <Text variant="label" color="primary" marginRight="s">
-              🔥
-            </Text>
-            <Box flex={1}>
-              <Text variant="subheader" marginBottom="xs">
-                Real Connections
-              </Text>
-              <Text variant="body" color="textSecondary">
-                Vulnerability > perfection.
-              </Text>
-            </Box>
-          </Box>
-        </AnimatedBox>
+        <Text
+          variant="body"
+          color="textSecondary"
+          textAlign="center"
+          marginBottom="xxl"
+          style={styles.subtitle}
+        >
+          Because perfect is boring, and your quirks make you interesting.
+        </Text>
 
-        {/* Sample Profiles Section */}
-        <Box padding="xl">
-          <Text variant="subheader" color="textPrimary" marginBottom="l" textAlign="center">
-            Meet Real People
-          </Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.profilesContainer}
+        <TouchableOpacity
+          style={styles.primaryButton}
+          onPress={() => navigation.navigate('Main')}
+        >
+          <Box
+            backgroundColor="primary"
+            borderRadius="m"
+            padding="m"
+            width={SCREEN_WIDTH - 48}
+            alignItems="center"
           >
-            {mockProfiles.map((profile, index) => (
-              <ProfilePreview
-                key={profile.id}
-                profile={profile}
-                index={index}
-              />
-            ))}
-          </ScrollView>
-        </Box>
-
-        {/* Footer */}
-        <Box
-          padding="xl"
-          backgroundColor="cardBackground"
-          borderTopLeftRadius="xl"
-          borderTopRightRadius="xl"
-        >
-          <Box flexDirection="row" justifyContent="space-around">
-            <TouchableOpacity>
-              <Text variant="label" color="textSecondary">
-                Terms
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Text variant="label" color="textSecondary">
-                Privacy
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Text variant="label" color="textSecondary">
-                Contact
-              </Text>
-            </TouchableOpacity>
+            <Text color="white" variant="body" style={styles.buttonText}>
+              Start Being Real
+            </Text>
           </Box>
-        </Box>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.secondaryButton}
+          onPress={() => navigation.navigate('Main')}
+        >
+          <Box
+            backgroundColor="mainBackground"
+            borderRadius="m"
+            padding="m"
+            width={SCREEN_WIDTH - 48}
+            alignItems="center"
+            borderWidth={1}
+            borderColor="border"
+          >
+            <Text color="textPrimary" variant="body" style={styles.buttonText}>
+              I Already Have an Account
+            </Text>
+          </Box>
+        </TouchableOpacity>
       </Box>
-    </ScrollView>
+
+      {/* Features Section */}
+      <Box padding="xl" backgroundColor="cardBackground" borderRadius="xl" margin="m">
+        {features.map((feature, index) => (
+          <FeatureCard
+            key={feature.title}
+            {...feature}
+            index={index}
+            scrollY={scrollY}
+          />
+        ))}
+      </Box>
+
+      {/* Profiles Section */}
+      <Box padding="xl">
+        <Text
+          variant="header"
+          color="textPrimary"
+          marginBottom="xl"
+          textAlign="center"
+        >
+          Meet Real People
+        </Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.profilesContainer}
+          decelerationRate="fast"
+          snapToInterval={SCREEN_WIDTH * 0.8 + 24}
+        >
+          {mockProfiles.map((profile, index) => (
+            <ProfilePreviewCard
+              key={profile.id}
+              profile={profile}
+              index={index}
+            />
+          ))}
+        </ScrollView>
+      </Box>
+
+      {/* Footer */}
+      <Box
+        padding="xl"
+        backgroundColor="cardBackground"
+        borderTopLeftRadius="xl"
+        borderTopRightRadius="xl"
+        marginTop="xl"
+      >
+        <Box flexDirection="row" justifyContent="space-between" marginBottom="l">
+          <TouchableOpacity>
+            <Text variant="label" color="textSecondary">
+              Terms
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text variant="label" color="textSecondary">
+              Privacy
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text variant="label" color="textSecondary">
+              Contact
+            </Text>
+          </TouchableOpacity>
+        </Box>
+        <Text
+          variant="label"
+          color="textSecondary"
+          textAlign="center"
+          opacity={0.7}
+        >
+          Built by beautifully broken humans 💔
+        </Text>
+      </Box>
+    </Animated.ScrollView>
   );
 };
 
@@ -167,8 +217,37 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
   },
+  brandName: {
+    fontSize: 48,
+    fontWeight: 'bold',
+    letterSpacing: -1,
+    lineHeight: 52,
+  },
+  tagline: {
+    fontSize: 24,
+    lineHeight: 32,
+  },
+  subtitle: {
+    fontSize: 18,
+    lineHeight: 24,
+    maxWidth: SCREEN_WIDTH * 0.8,
+  },
+  primaryButton: {
+    marginBottom: 16,
+    width: '100%',
+  },
+  secondaryButton: {
+    width: '100%',
+  },
+  buttonText: {
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  featureIcon: {
+    fontSize: 24,
+  },
   profilesContainer: {
-    paddingHorizontal: (SCREEN_WIDTH - SCREEN_WIDTH * 0.8) / 2 - 10,
+    paddingHorizontal: (SCREEN_WIDTH - SCREEN_WIDTH * 0.8) / 2 - 12,
   },
 });
 
