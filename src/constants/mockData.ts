@@ -56,7 +56,7 @@ export const mockProfiles: Profile[] = [
     age: 31,
     city: 'New York',
     photos: ['https://picsum.photos/id/1012/400/600'],
-    bio: 'Professional procrastinator with a PhD in starting Netflix series I'll never finish. Seeking someone who appreciates my organized chaos.',
+    bio: 'Professional procrastinator with a PhD in starting Netflix series I will never finish. Seeking someone who appreciates my organized chaos.',
     flaws: [
       flawTags[6], // Procrastinator
       flawTags[10], // Messy Room
